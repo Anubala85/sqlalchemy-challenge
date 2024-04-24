@@ -25,14 +25,10 @@ Base.prepare(autoload_with=engine)
 Station = Base.classes.station
 Measurement = Base.classes.measurement
 
-# Create our session (link) from Python to the DB
-
-
 #################################################
 # Flask Setup
 #################################################
 app = Flask(__name__)
-
 
 
 #################################################
@@ -145,10 +141,10 @@ def temp_stats_startdate(start):
         stats_temp["TMAX"] = tmax
         stats.append (stats_temp)
 
-    if stats[0]["TMIN"] == "":
-        return jsonify(stats)
+    if stats[0]["TMIN"] == "" or stats[0]["TMIN"] is None:
+        return jsonify ({"Error": "No Record Found. Data available for dates between 01-01-2017 and 08-23-2017 (mm-dd-yyyy) only."}), 404
     
-    return jsonify ({"Error": "No Record Found"}), 404
+    return jsonify(stats)
 
 @app.route("/api/v1.0/<start>/<end>")
 def temp_stats_start_enddate(start, end):
@@ -173,10 +169,10 @@ def temp_stats_start_enddate(start, end):
         stats_temp["TMAX"] = tmax
         stats.append (stats_temp)
     
-    if stats[0]["TMIN"] == "":
-        return jsonify(stats)
+    if stats[0]["TMIN"] == "" or stats[0]["TMIN"] is None:
+        return jsonify ({"Error": "No Record Found. Data available for dates between 01-01-2017 and 08-23-2017 (mm-dd-yyyy) only."}), 404
     
-    return jsonify ({"Error": "No Record Found"}), 404
-
+    return jsonify(stats)
+    
 if __name__ == "__main__":
     app.run(debug=True)
